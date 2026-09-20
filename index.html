@@ -1,0 +1,930 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>中1歴史 定期考査対策ゲーム</title>
+
+<style>
+body{
+  font-family:system-ui,sans-serif;
+  background:#f5f7fb;
+  margin:0;
+  color:#222;
+}
+.wrap{
+  max-width:800px;
+  margin:auto;
+  padding:20px;
+}
+.card{
+  background:#fff;
+  border-radius:16px;
+  padding:24px;
+  box-shadow:0 8px 24px #0001;
+  margin-bottom:16px;
+}
+button,input,select{
+  font:inherit;
+}
+input,select{
+  width:100%;
+  box-sizing:border-box;
+  padding:12px;
+  margin:6px 0 14px;
+  border:1px solid #ccc;
+  border-radius:10px;
+}
+button{
+  border:0;
+  border-radius:12px;
+  padding:12px 18px;
+  cursor:pointer;
+}
+.primary{
+  background:#2563eb;
+  color:#fff;
+}
+.secondary{
+  background:#e5e7eb;
+}
+.choice{
+  display:block;
+  width:100%;
+  text-align:left;
+  margin:10px 0;
+  background:#f3f4f6;
+}
+.choice.sel{
+  outline:3px solid #2563eb;
+  background:#eaf1ff;
+}
+.hidden{
+  display:none;
+}
+.barbox{
+  height:10px;
+  background:#e5e7eb;
+  border-radius:999px;
+  overflow:hidden;
+}
+.bar{
+  height:100%;
+  background:#2563eb;
+}
+.big{
+  font-size:46px;
+  font-weight:800;
+}
+.good{
+  color:#166534;
+  font-weight:700;
+}
+.bad{
+  color:#b91c1c;
+  font-weight:700;
+}
+.small{
+  font-size:13px;
+  color:#666;
+}
+.pill{
+  display:inline-block;
+  background:#eef2ff;
+  padding:5px 9px;
+  border-radius:999px;
+  font-size:12px;
+}
+</style>
+</head>
+
+<body>
+
+<div class="wrap">
+
+<div class="card" id="start">
+  <h1>中1歴史 定期考査対策ゲーム</h1>
+  <p>範囲：奈良時代〜平安時代</p>
+
+  <label>名前</label>
+  <input id="name" placeholder="名前を入力">
+
+  <label>モード</label>
+  <select id="mode">
+    <option value="10">10問チャレンジ</option>
+    <option value="20">20問チャレンジ</option>
+    <option value="all">全問チャレンジ</option>
+  </select>
+
+  <button class="primary" onclick="startQuiz()">スタート</button>
+</div>
+
+
+<div class="card hidden" id="quiz">
+
+  <div class="barbox">
+    <div class="bar" id="bar"></div>
+  </div>
+
+  <p class="small" id="count"></p>
+
+  <span class="pill" id="topic"></span>
+
+  <h2 id="q"></h2>
+
+  <div id="choices"></div>
+
+  <div id="feedback"
+       class="hidden"
+       style="margin-top:16px;padding:16px;border-radius:12px;font-size:18px;font-weight:700">
+  </div>
+
+  <button
+    id="nextBtn"
+    class="primary"
+    onclick="nextQ()"
+    disabled
+    style="opacity:.5">
+    次へ
+  </button>
+
+</div>
+
+
+<div class="card hidden" id="result">
+
+  <h2>結果</h2>
+
+  <div class="big" id="score"></div>
+
+  <p id="msg"></p>
+
+  <p>
+    <b>正解数：</b>
+    <span id="correct"></span>
+  </p>
+
+  <h3>間違えた問題</h3>
+
+  <div id="review"></div>
+
+  <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:20px">
+
+    <button class="primary" onclick="retryWrong()">
+      間違えた問題だけ再挑戦
+    </button>
+
+    <button class="secondary" onclick="location.reload()">
+      最初から
+    </button>
+
+  </div>
+
+  <p class="small" id="sendStatus">
+    全問終了後、成績は自動送信されます。
+  </p>
+
+</div>
+
+</div>
+
+
+<script>
+
+const ALL=[
+
+{
+q:"710年、唐の長安にならってつくられた都は？",
+c:["平城京","平安京","藤原京","長岡京"],
+a:0,
+e:"710年に平城京がつくられました。",
+topic:"奈良時代"
+},
+
+{
+q:"奈良時代の都・平城京のモデルとなった唐の都は？",
+c:["洛陽","長安","開封","南京"],
+a:1,
+e:"平城京は唐の長安にならってつくられました。",
+topic:"奈良時代"
+},
+
+{
+q:"奈良時代に使われた貨幣は？",
+c:["和同開珎","富本銭","永楽通宝","寛永通宝"],
+a:0,
+e:"奈良時代には和同開珎が使われました。",
+topic:"奈良時代"
+},
+
+{
+q:"奈良時代の税で、収穫量のおよそ3％の稲を納めるものは？",
+c:["租","庸","調","雑徭"],
+a:0,
+e:"租は収穫量の約3％の稲を納める税です。",
+topic:"税制"
+},
+
+{
+q:"奈良時代の税で、地方の特産物を納めるものは？",
+c:["租","庸","調","出挙"],
+a:2,
+e:"調は地方の特産物を納める税です。",
+topic:"税制"
+},
+
+{
+q:"奈良時代の税で、労役の代わりに布などを納めるものは？",
+c:["租","庸","調","公出挙"],
+a:1,
+e:"庸は労役の代わりに布などを納める税です。",
+topic:"税制"
+},
+
+{
+q:"3年間、九州北部の防衛につく兵役は？",
+c:["衛士","防人","雑徭","兵部"],
+a:1,
+e:"防人は九州北部の防衛につく兵役です。",
+topic:"税制"
+},
+
+{
+q:"奈良時代、人々に口分田を与えるもとになった制度は？",
+c:["班田収授法","墾田永年私財法","三世一身法","荘園制"],
+a:0,
+e:"班田収授法にもとづいて口分田が支給されました。",
+topic:"律令制度"
+},
+
+{
+q:"口分田は、本人が死ぬとどうなった？",
+c:["子に相続された","国に返された","寺に寄進された","売却された"],
+a:1,
+e:"口分田は死後、国に返す決まりでした。",
+topic:"律令制度"
+},
+
+{
+q:"743年に出された、開墾した土地の永久私有を認める法は？",
+c:["墾田永年私財法","三世一身法","班田収授法","大宝律令"],
+a:0,
+e:"743年に墾田永年私財法が出されました。",
+topic:"土地制度"
+},
+
+{
+q:"新しく開墾した土地について、一定期間の私有を認めた法は？",
+c:["三世一身法","墾田永年私財法","公地公民制","律令"],
+a:0,
+e:"三世一身法では一定期間の私有を認めました。",
+topic:"土地制度"
+},
+
+{
+q:"寺院や貴族などが広げていった私有地は？",
+c:["荘園","口分田","公領","屯倉"],
+a:0,
+e:"私有地が広がり、荘園が増えていきました。",
+topic:"土地制度"
+},
+
+{
+q:"奈良時代、九州に置かれ外交や軍事を担当した役所は？",
+c:["太宰府","国府","鎮守府","政所"],
+a:0,
+e:"九州には太宰府が置かれました。",
+topic:"地方行政"
+},
+
+{
+q:"奈良時代、日本と大陸を結ぶ交流路として重要だったものは？",
+c:["シルクロード","大西洋航路","北西航路","香辛料航路"],
+a:0,
+e:"シルクロードを通じて国際的な文物が伝わりました。",
+topic:"文化交流"
+},
+
+{
+q:"794年、新しい都として移されたのは？",
+c:["平安京","平城京","藤原京","大津京"],
+a:0,
+e:"794年に都は平安京へ移されました。",
+topic:"平安時代"
+},
+
+{
+q:"平安京への遷都を行った天皇は？",
+c:["桓武天皇","聖武天皇","天智天皇","推古天皇"],
+a:0,
+e:"桓武天皇が平安京へ都を移しました。",
+topic:"平安時代"
+},
+
+{
+q:"平安時代、政治の実権を握った有力貴族は？",
+c:["藤原氏","蘇我氏","平氏","源氏"],
+a:0,
+e:"藤原氏が摂関政治を進めました。",
+topic:"貴族政治"
+},
+
+{
+q:"天皇が幼いときに政治を代行する役職は？",
+c:["摂政","関白","太政大臣","征夷大将軍"],
+a:0,
+e:"幼い天皇を補佐し政治を行うのが摂政です。",
+topic:"貴族政治"
+},
+
+{
+q:"成人した天皇を補佐して政治を行う役職は？",
+c:["関白","摂政","国司","太宰帥"],
+a:0,
+e:"成人した天皇を補佐するのが関白です。",
+topic:"貴族政治"
+},
+
+{
+q:"藤原氏が天皇の外戚となって行った政治は？",
+c:["摂関政治","院政","武家政治","律令政治"],
+a:0,
+e:"藤原氏は摂政・関白として摂関政治を進めました。",
+topic:"貴族政治"
+},
+
+{
+q:"894年、遣唐使の停止を提案した人物は？",
+c:["菅原道真","藤原道長","聖徳太子","最澄"],
+a:0,
+e:"菅原道真が遣唐使の停止を提案しました。",
+topic:"国風文化"
+},
+
+{
+q:"遣唐使の停止後、日本の風土や生活に合った文化として発達したのは？",
+c:["国風文化","天平文化","飛鳥文化","北山文化"],
+a:0,
+e:"遣唐使停止後、国風文化が発達しました。",
+topic:"国風文化"
+},
+
+{
+q:"国風文化のころ、漢字をもとに作られた文字は？",
+c:["かな文字","ローマ字","ハングル","梵字"],
+a:0,
+e:"ひらがなやカタカナなどのかな文字が発達しました。",
+topic:"国風文化"
+},
+
+{
+q:"平安時代の貴族の住居として代表的な様式は？",
+c:["寝殿造","書院造","合掌造","校倉造"],
+a:0,
+e:"貴族の住居には寝殿造が見られました。",
+topic:"国風文化"
+},
+
+{
+q:"『源氏物語』を書いた人物は？",
+c:["紫式部","清少納言","紀貫之","和泉式部"],
+a:0,
+e:"『源氏物語』は紫式部の作品です。",
+topic:"国風文化"
+},
+
+{
+q:"『枕草子』を書いた人物は？",
+c:["清少納言","紫式部","菅原道真","小野小町"],
+a:0,
+e:"『枕草子』は清少納言の作品です。",
+topic:"国風文化"
+},
+
+{
+q:"平安時代に広まった、日本独自の絵画様式は？",
+c:["大和絵","水墨画","浮世絵","錦絵"],
+a:0,
+e:"国風文化では大和絵が発達しました。",
+topic:"国風文化"
+},
+
+{
+q:"極楽浄土への往生を願う信仰と関わりが深いのは？",
+c:["浄土信仰","禅宗","神道","儒教"],
+a:0,
+e:"平安時代には浄土信仰が広まりました。",
+topic:"国風文化"
+},
+
+{
+q:"藤原氏の摂関政治が最も栄えたころの人物は？",
+c:["藤原道長","藤原鎌足","藤原不比等","藤原清衡"],
+a:0,
+e:"藤原道長のころに摂関政治は全盛期を迎えました。",
+topic:"貴族政治"
+}
+
+];
+
+
+const el = id => document.getElementById(id);
+
+let qs=[];
+let idx=0;
+let selected=null;
+let answers=[];
+let startedAt=null;
+let lastWrong=[];
+let sentForAttempt=false;
+
+
+function shuffle(a){
+
+  const b=[...a];
+
+  for(let i=b.length-1;i>0;i--){
+
+    const j=Math.floor(Math.random()*(i+1));
+
+    [b[i],b[j]]=[b[j],b[i]];
+
+  }
+
+  return b;
+}
+
+
+function startQuiz(){
+
+  const studentName=el("name").value.trim();
+
+  if(!studentName){
+
+    alert("名前を入力してください");
+
+    return;
+  }
+
+  qs=shuffle(ALL);
+
+  const selectedMode=el("mode").value;
+
+  if(selectedMode!=="all"){
+
+    qs=qs.slice(0,Number(selectedMode));
+
+  }
+
+  idx=0;
+  answers=[];
+  selected=null;
+  sentForAttempt=false;
+  startedAt=new Date();
+
+  el("start").classList.add("hidden");
+  el("result").classList.add("hidden");
+  el("quiz").classList.remove("hidden");
+
+  render();
+}
+
+
+function render(){
+
+  selected=null;
+
+  const x=qs[idx];
+
+  el("count").textContent=
+  `第${idx+1}問 / ${qs.length}問`;
+
+  el("topic").textContent=x.topic;
+
+  el("q").textContent=x.q;
+
+  el("bar").style.width=
+  `${(idx/qs.length)*100}%`;
+
+  const box=el("choices");
+
+  box.innerHTML="";
+
+  const fb=el("feedback");
+
+  fb.classList.add("hidden");
+
+  fb.innerHTML="";
+
+  fb.style.background="";
+
+  fb.style.color="";
+
+  const nextBtn=el("nextBtn");
+
+  nextBtn.disabled=true;
+
+  nextBtn.style.opacity=".5";
+
+
+  x.c.forEach((t,i)=>{
+
+    const b=document.createElement("button");
+
+    b.className="choice";
+
+    b.textContent=
+    `${String.fromCharCode(65+i)}. ${t}`;
+
+
+    b.addEventListener("click",()=>{
+
+      if(selected!==null)return;
+
+      selected=i;
+
+      answers.push(i);
+
+
+      document.querySelectorAll(".choice")
+      .forEach((btn,j)=>{
+
+        btn.disabled=true;
+
+        if(j===x.a){
+
+          btn.style.background="#e8f5e9";
+
+          btn.style.outline=
+          "3px solid #2e7d32";
+        }
+
+
+        if(j===i && i!==x.a){
+
+          btn.style.background="#ffebee";
+
+          btn.style.outline=
+          "3px solid #c62828";
+        }
+
+      });
+
+
+      fb.classList.remove("hidden");
+
+
+      if(i===x.a){
+
+        fb.style.background="#e8f5e9";
+
+        fb.style.color="#166534";
+
+        fb.innerHTML=
+        `<div style="font-size:28px">
+        ○ 正解！
+        </div>
+
+        <div style="margin-top:8px">
+        正解：${x.c[x.a]}
+        </div>
+
+        <div class="small"
+        style="margin-top:6px;color:#166534">
+        ${x.e}
+        </div>`;
+
+      }else{
+
+        fb.style.background="#ffebee";
+
+        fb.style.color="#b91c1c";
+
+        fb.innerHTML=
+        `<div style="font-size:28px">
+        × 不正解
+        </div>
+
+        <div style="margin-top:8px">
+        正解：${x.c[x.a]}
+        </div>
+
+        <div class="small"
+        style="margin-top:6px;color:#b91c1c">
+        ${x.e}
+        </div>`;
+
+      }
+
+
+      nextBtn.disabled=false;
+
+      nextBtn.style.opacity="1";
+
+    });
+
+
+    box.appendChild(b);
+
+  });
+
+}
+
+
+function nextQ(){
+
+  if(selected===null){
+
+    alert("答えを選んでください");
+
+    return;
+
+  }
+
+
+  idx++;
+
+
+  if(idx<qs.length){
+
+    render();
+
+  }else{
+
+    showResult();
+
+  }
+
+}
+
+
+function showResult(){
+
+  el("quiz").classList.add("hidden");
+
+  el("result").classList.remove("hidden");
+
+
+  let ok=0;
+
+  lastWrong=[];
+
+
+  qs.forEach((x,i)=>{
+
+    if(answers[i]===x.a){
+
+      ok++;
+
+    }else{
+
+      lastWrong.push({
+        ...x,
+        no:i+1,
+        yours:x.c[answers[i]]
+      });
+
+    }
+
+  });
+
+
+  const s=
+  Math.round(ok/qs.length*100);
+
+
+  el("score").textContent=s+"点";
+
+  el("correct").textContent=
+  `${ok} / ${qs.length}`;
+
+
+  el("msg").textContent=
+
+  s>=90
+  ? "かなり仕上がっています！"
+
+  :s>=70
+  ? "よくできています。間違い直しでさらに伸ばそう。"
+
+  :"まずは間違えた問題を重点的に復習しよう。";
+
+
+  el("review").innerHTML=
+
+  lastWrong.length
+
+  ? lastWrong.map(w=>`
+
+  <div style="
+  padding:12px;
+  margin:10px 0;
+  background:#fff7f7;
+  border-radius:10px">
+
+  <div class="bad">
+
+  第${w.no}問（${w.topic}）
+
+  </div>
+
+  <div>
+  ${w.q}
+  </div>
+
+  <div>
+  あなたの答え：${w.yours}
+  </div>
+
+  <div class="good">
+  正解：${w.c[w.a]}
+  </div>
+
+  <div class="small">
+  ${w.e}
+  </div>
+
+  </div>
+
+  `).join("")
+
+  :'<p class="good">全問正解！</p>';
+
+
+  sendResult();
+
+}
+
+
+function retryWrong(){
+
+  if(!lastWrong.length){
+
+    alert("間違いはありません！");
+
+    return;
+
+  }
+
+
+  qs=
+  shuffle(
+
+    lastWrong.map(w=>({
+
+      q:w.q,
+      c:w.c,
+      a:w.a,
+      e:w.e,
+      topic:w.topic
+
+    }))
+
+  );
+
+
+  idx=0;
+
+  answers=[];
+
+  selected=null;
+
+  sentForAttempt=false;
+
+  startedAt=new Date();
+
+  el("result").classList.add("hidden");
+
+  el("quiz").classList.remove("hidden");
+
+  render();
+
+}
+
+
+function buildData(){
+
+  let ok=0;
+
+  let wn=[];
+
+  let tp={};
+
+
+  qs.forEach((x,i)=>{
+
+    if(answers[i]===x.a){
+
+      ok++;
+
+    }else{
+
+      wn.push(i+1);
+
+      tp[x.topic]=(tp[x.topic]||0)+1;
+
+    }
+
+  });
+
+
+  return{
+
+    studentName:
+    el("name").value.trim(),
+
+    subject:"歴史",
+
+    score:
+    Math.round(ok/qs.length*100),
+
+    correct:ok,
+
+    total:qs.length,
+
+    wrongQuestions:
+    wn.join(","),
+
+    weakTopics:
+    Object.entries(tp)
+    .sort((a,b)=>b[1]-a[1])
+    .map(x=>x[0])
+    .join(","),
+
+    startedAt:
+    startedAt
+    ? startedAt.toISOString()
+    :"",
+
+    finishedAt:
+    new Date().toISOString()
+
+  };
+
+}
+
+
+async function sendResult(){
+
+  const status=
+  el("sendStatus");
+
+
+  const ENDPOINT=
+  "https://script.google.com/macros/s/AKfycbxxBGR0zMSx34cOws9dt7la53wo9ufEnY5_J3tKoQ6u7iI7y6N3pvbc2T6N0CUv1hJl/exec";
+
+
+  if(sentForAttempt)return;
+
+  sentForAttempt=true;
+
+
+  try{
+
+    status.textContent=
+    "成績を自動送信中…";
+
+
+    await fetch(
+      ENDPOINT,
+      {
+
+        method:"POST",
+
+        mode:"no-cors",
+
+        headers:{
+          "Content-Type":
+          "text/plain;charset=utf-8"
+        },
+
+        body:
+        JSON.stringify(
+          buildData()
+        )
+
+      }
+    );
+
+
+    status.textContent=
+    "成績は管理者へ自動送信されました。";
+
+
+  }catch(e){
+
+    console.error(e);
+
+    sentForAttempt=false;
+
+    status.textContent=
+    "成績の自動送信に失敗しました。通信環境を確認してください。";
+
+  }
+
+}
+
+</script>
+
+</body>
+</html>
