@@ -95,6 +95,71 @@ button{
   border-radius:999px;
   font-size:12px;
 }
+  /* スマホ向けに少し小さくする */
+
+@media (max-width: 480px) {
+
+  .container, .card, .quiz-box {
+
+    padding: 18px !important;
+
+    border-radius: 20px !important;
+
+  }
+
+  h1, h2, .question {
+
+    font-size: 18px !important;
+
+    line-height: 1.4 !important;
+
+  }
+
+  .progress-text, .category {
+
+    font-size: 14px !important;
+
+  }
+
+  .choice, .option, .answer-btn, button {
+
+    font-size: 16px !important;
+
+    padding: 14px 16px !important;
+
+    margin-bottom: 10px !important;
+
+    border-radius: 14px !important;
+
+  }
+
+  .result, .explanation {
+
+    font-size: 15px !important;
+
+    padding: 14px !important;
+
+  }
+
+  #nextBtn, .next-btn {
+
+    position: sticky;
+
+    bottom: 10px;
+
+    width: 100%;
+
+    margin-top: 12px;
+
+    padding: 14px 16px;
+
+    font-size: 16px;
+
+    z-index: 20;
+
+  }
+
+}
 </style>
 </head>
 
