@@ -3,1246 +3,320 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>中1歴史 定期考査対策ゲーム</title>
-
+<title>中1歴史 定期考査対策ゲーム 完全版</title>
 <style>
-body{
-  font-family:system-ui,sans-serif;
-  background:#f5f7fb;
-  margin:0;
-  color:#222;
-}
-
-.wrap{
-  max-width:800px;
-  margin:auto;
-  padding:12px;
-}
-
-.card{
-  background:#fff;
-  border-radius:16px;
-  padding:18px;
-  box-shadow:0 8px 24px #0001;
-  margin-bottom:12px;
-}
-
-h1{
-  font-size:24px;
-  margin-top:0;
-}
-
-h2{
-  font-size:22px;
-  margin:12px 0;
-}
-
-button,input,select{
-  font:inherit;
-}
-
-input,select{
-  width:100%;
-  box-sizing:border-box;
-  padding:10px;
-  margin:5px 0 10px;
-  border:1px solid #ccc;
-  border-radius:10px;
-}
-
-button{
-  border:0;
-  border-radius:12px;
-  padding:11px 16px;
-  cursor:pointer;
-}
-
-.primary{
-  background:#2563eb;
-  color:#fff;
-}
-
-.secondary{
-  background:#e5e7eb;
-}
-
-.choice{
-  display:block;
-  width:100%;
-  text-align:left;
-  margin:8px 0;
-  padding:12px;
-  background:#f3f4f6;
-}
-
-.hidden{
-  display:none;
-}
-
-.barbox{
-  height:9px;
-  background:#e5e7eb;
-  border-radius:999px;
-  overflow:hidden;
-}
-
-.bar{
-  height:100%;
-  background:#2563eb;
-}
-
-.big{
-  font-size:42px;
-  font-weight:800;
-}
-
-.good{
-  color:#166534;
-  font-weight:700;
-}
-
-.bad{
-  color:#b91c1c;
-  font-weight:700;
-}
-
-.small{
-  font-size:13px;
-  color:#666;
-}
-
-.pill{
-  display:inline-block;
-  background:#eef2ff;
-  padding:5px 9px;
-  border-radius:999px;
-  font-size:12px;
-}
-
-#nextBtn{
-  width:100%;
-  margin-top:12px;
-  font-size:18px;
-}
-
-#feedback{
-  text-align:center;
-}
+body{font-family:system-ui,-apple-system,"Segoe UI","Noto Sans JP",sans-serif;background:#f4f6fa;margin:0;color:#222}
+.wrap{max-width:820px;margin:auto;padding:16px}
+.card{background:#fff;border-radius:18px;padding:22px;box-shadow:0 8px 28px rgba(0,0,0,.08);margin-bottom:16px}
+h1{font-size:26px;margin-top:0} h2{font-size:22px}
+button,input,select{font:inherit}
+input,select{width:100%;box-sizing:border-box;padding:12px;border:1px solid #ccc;border-radius:10px;margin:7px 0 14px}
+button{border:0;border-radius:12px;padding:12px 18px;cursor:pointer}
+.primary{background:#2457d6;color:#fff} .secondary{background:#e8ebf0}
+.choice{display:block;width:100%;text-align:left;background:#f3f4f6;margin:9px 0;padding:14px}
+.choice.sel{outline:3px solid #2457d6;background:#edf3ff}
+.hidden{display:none}
+.barbox{height:10px;background:#e5e7eb;border-radius:20px;overflow:hidden} .bar{height:100%;background:#2457d6}
+.big{font-size:46px;font-weight:800} .good{color:#137333;font-weight:700} .bad{color:#b3261e;font-weight:700}
+.small{font-size:13px;color:#666} .pill{display:inline-block;padding:5px 9px;background:#eef2ff;border-radius:999px;font-size:12px;margin-right:5px}
+.modehelp{background:#f7f8fb;border-radius:12px;padding:12px;margin:8px 0 15px;line-height:1.6}
+.sort-card{background:#f7f8fb;border:2px solid #dbe1ea;border-radius:14px;padding:14px;margin:10px 0;touch-action:none;user-select:none}
+.sort-row{display:flex;align-items:center;gap:10px}
+.drag{font-size:22px;cursor:grab}
+.year-hidden{font-size:12px;color:#777}
+.sort-actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:14px}
 </style>
 </head>
-
-<body>
-
-<div class="wrap">
+<body><div class="wrap">
 
 <div class="card" id="start">
-
 <h1>中1歴史 定期考査対策ゲーム</h1>
-
-<p>範囲：奈良時代〜平安時代</p>
-
+<p>授業プリント No.11〜13・ワーク p.16〜25</p>
 <label>名前</label>
-
 <input id="name" placeholder="名前を入力">
 
-<label>モード</label>
+<label>使い方</label>
+<select id="quizType" onchange="updateModeHelp()">
+<option value="study">覚えるクイズ</option>
+<option value="test">テストクイズ</option>
+<option value="timeline">時系列クイズ</option>
+<option value="timelineSort">時系列・並び替えゲーム</option>
+</select>
+<div id="modeHelp" class="modehelp"></div>
 
+<label id="countLabel">問題数</label>
 <select id="mode">
-<option value="10">10問チャレンジ</option>
-<option value="20">20問チャレンジ</option>
-<option value="all">全問チャレンジ</option>
+<option value="10">10問</option>
+<option value="20">20問</option>
+<option value="30">30問</option>
+<option value="all">全問</option>
 </select>
 
-<button class="primary" onclick="startQuiz()">
-スタート
-</button>
-
+<button class="primary" onclick="startQuiz()">スタート</button>
 </div>
-
 
 <div class="card hidden" id="quiz">
-
-<div class="barbox">
-<div class="bar" id="bar"></div>
-</div>
-
+<div class="barbox"><div class="bar" id="bar" style="width:0%"></div></div>
 <p class="small" id="count"></p>
-
 <span class="pill" id="topic"></span>
-
 <h2 id="q"></h2>
-
 <div id="choices"></div>
-
-<div
-id="feedback"
-class="hidden"
-style="
-margin-top:12px;
-padding:12px;
-border-radius:12px;
-font-size:18px;
-font-weight:700;
-">
+<div id="feedback" class="hidden" style="margin-top:16px;padding:16px;border-radius:12px;font-size:18px;font-weight:700"></div>
+<button id="nextBtn" class="primary" onclick="nextQ()" disabled style="opacity:.5">次へ</button>
 </div>
 
-<button
-id="nextBtn"
-class="primary"
-onclick="nextQ()"
-disabled
-style="opacity:.5">
-次へ
-</button>
-
+<div class="card hidden" id="sortQuiz">
+<div class="barbox"><div class="bar" id="sortBar" style="width:0%"></div></div>
+<p class="small" id="sortCount"></p>
+<span class="pill">時系列・並び替え</span>
+<h2 id="sortPrompt"></h2>
+<p class="small">▲▼ボタンでカードを上下に動かしてください。上が古く、下が新しい順です。</p>
+<div id="sortList"></div>
+<div id="sortFeedback" class="hidden" style="margin-top:16px;padding:16px;border-radius:12px;font-size:18px;font-weight:700"></div>
+<div class="sort-actions">
+<button class="primary" id="checkSortBtn" onclick="checkSort()">答え合わせ</button>
+<button class="secondary hidden" id="nextSortBtn" onclick="nextSort()">次へ</button>
 </div>
-
+</div>
 
 <div class="card hidden" id="result">
-
 <h2>結果</h2>
-
 <div class="big" id="score"></div>
-
 <p id="msg"></p>
-
-<p>
-<b>正解数：</b>
-<span id="correct"></span>
-</p>
-
+<p><b>正解数：</b><span id="correct"></span></p>
 <h3>間違えた問題</h3>
-
 <div id="review"></div>
-
-<div
-style="
-display:flex;
-gap:10px;
-flex-wrap:wrap;
-margin-top:20px;
-">
-
-<button
-class="primary"
-onclick="retryWrong()">
-間違えた問題だけ再挑戦
-</button>
-
-<button
-class="secondary"
-onclick="location.reload()">
-最初から
-</button>
-
+<div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:20px">
+<button class="primary" id="retryBtn" onclick="retryWrong()">間違えた問題だけ再挑戦</button>
+<button class="secondary" onclick="location.reload()">最初から</button>
 </div>
-
-<p
-class="small"
-id="sendStatus">
-全問終了後、成績は自動送信されます。
-</p>
-
+<p class="small" id="sendStatus">全問終了後、成績は自動送信されます。</p>
 </div>
 
 </div>
-
-
 <script>
-
-const ALL=[
-
-{
-q:"710年、唐の長安にならってつくられた都は？",
-c:["平城京","平安京","藤原京","長岡京"],
-a:0,
-e:"710年に平城京がつくられました。",
-topic:"奈良時代"
-},
-
-{
-q:"奈良時代の都・平城京のモデルとなった唐の都は？",
-c:["洛陽","長安","開封","南京"],
-a:1,
-e:"平城京は唐の長安にならってつくられました。",
-topic:"奈良時代"
-},
-
-{
-q:"奈良時代に使われた貨幣は？",
-c:["和同開珎","富本銭","永楽通宝","寛永通宝"],
-a:0,
-e:"奈良時代には和同開珎が使われました。",
-topic:"奈良時代"
-},
-
-{
-q:"奈良時代の税で、収穫量のおよそ3％の稲を納めるものは？",
-c:["租","庸","調","雑徭"],
-a:0,
-e:"租は収穫量の約3％の稲を納める税です。",
-topic:"税制"
-},
-
-{
-q:"奈良時代の税で、地方の特産物を納めるものは？",
-c:["租","庸","調","出挙"],
-a:2,
-e:"調は地方の特産物を納める税です。",
-topic:"税制"
-},
-
-{
-q:"奈良時代の税で、労役の代わりに布などを納めるものは？",
-c:["租","庸","調","公出挙"],
-a:1,
-e:"庸は労役の代わりに布などを納める税です。",
-topic:"税制"
-},
-
-{
-q:"3年間、九州北部の防衛につく兵役は？",
-c:["衛士","防人","雑徭","兵部"],
-a:1,
-e:"防人は九州北部の防衛につく兵役です。",
-topic:"税制"
-},
-
-{
-q:"奈良時代、人々に口分田を与えるもとになった制度は？",
-c:["班田収授法","墾田永年私財法","三世一身法","荘園制"],
-a:0,
-e:"班田収授法にもとづいて口分田が支給されました。",
-topic:"律令制度"
-},
-
-{
-q:"口分田は、本人が死ぬとどうなった？",
-c:["子に相続された","国に返された","寺に寄進された","売却された"],
-a:1,
-e:"口分田は死後、国に返す決まりでした。",
-topic:"律令制度"
-},
-
-{
-q:"743年に出された、開墾した土地の永久私有を認める法は？",
-c:["墾田永年私財法","三世一身法","班田収授法","大宝律令"],
-a:0,
-e:"743年に墾田永年私財法が出されました。",
-topic:"土地制度"
-},
-
-{
-q:"新しく開墾した土地について、一定期間の私有を認めた法は？",
-c:["三世一身法","墾田永年私財法","公地公民制","律令"],
-a:0,
-e:"三世一身法では一定期間の私有を認めました。",
-topic:"土地制度"
-},
-
-{
-q:"寺院や貴族などが広げていった私有地は？",
-c:["荘園","口分田","公領","屯倉"],
-a:0,
-e:"私有地が広がり、荘園が増えていきました。",
-topic:"土地制度"
-},
-
-{
-q:"奈良時代、九州に置かれ外交や軍事を担当した役所は？",
-c:["太宰府","国府","鎮守府","政所"],
-a:0,
-e:"九州には太宰府が置かれました。",
-topic:"地方行政"
-},
-
-{
-q:"奈良時代、日本と大陸を結ぶ交流路として重要だったものは？",
-c:["シルクロード","大西洋航路","北西航路","香辛料航路"],
-a:0,
-e:"シルクロードを通じて国際的な文物が伝わりました。",
-topic:"文化交流"
-},
-
-{
-q:"794年、新しい都として移されたのは？",
-c:["平安京","平城京","藤原京","大津京"],
-a:0,
-e:"794年に都は平安京へ移されました。",
-topic:"平安時代"
-},
-
-{
-q:"平安京への遷都を行った天皇は？",
-c:["桓武天皇","聖武天皇","天智天皇","推古天皇"],
-a:0,
-e:"桓武天皇が平安京へ都を移しました。",
-topic:"平安時代"
-},
-
-{
-q:"平安時代、政治の実権を握った有力貴族は？",
-c:["藤原氏","蘇我氏","平氏","源氏"],
-a:0,
-e:"藤原氏が摂関政治を進めました。",
-topic:"貴族政治"
-},
-
-{
-q:"天皇が幼いときに政治を代行する役職は？",
-c:["摂政","関白","太政大臣","征夷大将軍"],
-a:0,
-e:"幼い天皇を補佐し政治を行うのが摂政です。",
-topic:"貴族政治"
-},
-
-{
-q:"成人した天皇を補佐して政治を行う役職は？",
-c:["関白","摂政","国司","太宰帥"],
-a:0,
-e:"成人した天皇を補佐するのが関白です。",
-topic:"貴族政治"
-},
-
-{
-q:"藤原氏が天皇の外戚となって行った政治は？",
-c:["摂関政治","院政","武家政治","律令政治"],
-a:0,
-e:"藤原氏は摂政・関白として摂関政治を進めました。",
-topic:"貴族政治"
-},
-
-{
-q:"894年、遣唐使の停止を提案した人物は？",
-c:["菅原道真","藤原道長","聖徳太子","最澄"],
-a:0,
-e:"菅原道真が遣唐使の停止を提案しました。",
-topic:"国風文化"
-},
-
-{
-q:"遣唐使の停止後、日本の風土や生活に合った文化として発達したのは？",
-c:["国風文化","天平文化","飛鳥文化","北山文化"],
-a:0,
-e:"遣唐使停止後、国風文化が発達しました。",
-topic:"国風文化"
-},
-
-{
-q:"国風文化のころ、漢字をもとに作られた文字は？",
-c:["かな文字","ローマ字","ハングル","梵字"],
-a:0,
-e:"ひらがなやカタカナなどのかな文字が発達しました。",
-topic:"国風文化"
-},
-
-{
-q:"平安時代の貴族の住居として代表的な様式は？",
-c:["寝殿造","書院造","合掌造","校倉造"],
-a:0,
-e:"貴族の住居には寝殿造が見られました。",
-topic:"国風文化"
-},
-
-{
-q:"『源氏物語』を書いた人物は？",
-c:["紫式部","清少納言","紀貫之","和泉式部"],
-a:0,
-e:"『源氏物語』は紫式部の作品です。",
-topic:"国風文化"
-},
-
-{
-q:"『枕草子』を書いた人物は？",
-c:["清少納言","紫式部","菅原道真","小野小町"],
-a:0,
-e:"『枕草子』は清少納言の作品です。",
-topic:"国風文化"
-},
-
-{
-q:"平安時代に広まった、日本独自の絵画様式は？",
-c:["大和絵","水墨画","浮世絵","錦絵"],
-a:0,
-e:"国風文化では大和絵が発達しました。",
-topic:"国風文化"
-},
-
-{
-q:"極楽浄土への往生を願う信仰と関わりが深いのは？",
-c:["浄土信仰","禅宗","神道","儒教"],
-a:0,
-e:"平安時代には浄土信仰が広まりました。",
-topic:"国風文化"
-},
-
-{
-q:"藤原氏の摂関政治が最も栄えたころの人物は？",
-c:["藤原道長","藤原鎌足","藤原不比等","藤原清衡"],
-a:0,
-e:"藤原道長のころに摂関政治は全盛期を迎えました。",
-topic:"貴族政治"
-}
-
-];
-
-
+const ALL=[{"q": "土地と人民を国家が支配する考えは？", "c": ["公地公民", "院政", "武家政治", "御成敗式目"], "a": 0, "e": "正解は「公地公民」です。", "topic": "重要語句"}, {"q": "人々を登録し、口分田や税の基礎にした台帳は？", "c": ["武家政治", "御成敗式目", "参勤交代", "戸籍"], "a": 3, "e": "正解は「戸籍」です。", "topic": "重要語句"}, {"q": "701年に制定された律令は？", "c": ["参勤交代", "鎌倉幕府", "大宝律令", "御成敗式目"], "a": 2, "e": "正解は「大宝律令」です。", "topic": "重要語句"}, {"q": "710年、唐の長安にならってつくられた都は？", "c": ["室町幕府", "平城京", "参勤交代", "鎌倉幕府"], "a": 1, "e": "正解は「平城京」です。", "topic": "重要語句"}, {"q": "平城京のモデルとなった唐の都は？", "c": ["長安", "鎌倉幕府", "室町幕府", "江戸幕府"], "a": 0, "e": "正解は「長安」です。", "topic": "重要語句"}, {"q": "奈良時代に使われた貨幣は？", "c": ["室町幕府", "江戸幕府", "勘合貿易", "和同開珎"], "a": 3, "e": "正解は「和同開珎」です。", "topic": "重要語句"}, {"q": "平城京で人々が品物を売買した場所は？", "c": ["勘合貿易", "書院造", "市", "江戸幕府"], "a": 2, "e": "正解は「市」です。", "topic": "重要語句"}, {"q": "班田収授法にもとづき人々に与えられた田は？", "c": ["水墨画", "口分田", "勘合貿易", "書院造"], "a": 1, "e": "正解は「口分田」です。", "topic": "重要語句"}, {"q": "戸籍にもとづき口分田を班給した制度は？", "c": ["班田収授法", "書院造", "水墨画", "法隆寺"], "a": 0, "e": "正解は「班田収授法」です。", "topic": "重要語句"}, {"q": "収穫量のおよそ3％の稲を納める税は？", "c": ["水墨画", "法隆寺", "長岡京", "租"], "a": 3, "e": "正解は「租」です。", "topic": "重要語句"}, {"q": "地方の特産物を納める税は？", "c": ["長岡京", "院政", "調", "法隆寺"], "a": 2, "e": "正解は「調」です。", "topic": "重要語句"}, {"q": "労役の代わりに布などを納める税は？", "c": ["武家政治", "庸", "長岡京", "院政"], "a": 1, "e": "正解は「庸」です。", "topic": "重要語句"}, {"q": "国司のもとで一定日数働く労役は？", "c": ["雑徭", "院政", "武家政治", "御成敗式目"], "a": 0, "e": "正解は「雑徭」です。", "topic": "重要語句"}, {"q": "九州北部の防衛につく兵役は？", "c": ["武家政治", "御成敗式目", "参勤交代", "防人"], "a": 3, "e": "正解は「防人」です。", "topic": "重要語句"}, {"q": "都の警備などについた兵役は？", "c": ["参勤交代", "鎌倉幕府", "衛士", "御成敗式目"], "a": 2, "e": "正解は「衛士」です。", "topic": "重要語句"}, {"q": "新しく開墾した土地の私有を一定期間認めた法は？", "c": ["室町幕府", "三世一身法", "参勤交代", "鎌倉幕府"], "a": 1, "e": "正解は「三世一身法」です。", "topic": "重要語句"}, {"q": "743年、開墾した土地の永久私有を認めた法は？", "c": ["墾田永年私財法", "鎌倉幕府", "室町幕府", "江戸幕府"], "a": 0, "e": "正解は「墾田永年私財法」です。", "topic": "重要語句"}, {"q": "貴族や寺院が広げた私有地は？", "c": ["室町幕府", "江戸幕府", "勘合貿易", "荘園"], "a": 3, "e": "正解は「荘園」です。", "topic": "重要語句"}, {"q": "九州に置かれ外交や軍事を担当した役所は？", "c": ["勘合貿易", "書院造", "太宰府", "江戸幕府"], "a": 2, "e": "正解は「太宰府」です。", "topic": "重要語句"}, {"q": "東西を結ぶ交易路は？", "c": ["水墨画", "シルクロード", "勘合貿易", "書院造"], "a": 1, "e": "正解は「シルクロード」です。", "topic": "重要語句"}, {"q": "唐に派遣された使節は？", "c": ["遣唐使", "書院造", "水墨画", "法隆寺"], "a": 0, "e": "正解は「遣唐使」です。", "topic": "重要語句"}, {"q": "唐から来日し日本に戒律を伝えた僧は？", "c": ["水墨画", "法隆寺", "長岡京", "鑑真"], "a": 3, "e": "正解は「鑑真」です。", "topic": "重要語句"}, {"q": "聖武天皇が国ごとに建立させた寺院は？", "c": ["長岡京", "院政", "国分寺・国分尼寺", "法隆寺"], "a": 2, "e": "正解は「国分寺・国分尼寺」です。", "topic": "重要語句"}, {"q": "聖武天皇が大仏を造立させた寺は？", "c": ["武家政治", "東大寺", "長岡京", "院政"], "a": 1, "e": "正解は「東大寺」です。", "topic": "重要語句"}, {"q": "奈良時代の国際色豊かな文化は？", "c": ["天平文化", "院政", "武家政治", "御成敗式目"], "a": 0, "e": "正解は「天平文化」です。", "topic": "重要語句"}, {"q": "東大寺にある国際色豊かな宝物を納めた建物は？", "c": ["武家政治", "御成敗式目", "参勤交代", "正倉院"], "a": 3, "e": "正解は「正倉院」です。", "topic": "重要語句"}, {"q": "794年に平安京へ遷都した天皇は？", "c": ["参勤交代", "鎌倉幕府", "桓武天皇", "御成敗式目"], "a": 2, "e": "正解は「桓武天皇」です。", "topic": "重要語句"}, {"q": "794年に都が移された場所は？", "c": ["室町幕府", "平安京", "参勤交代", "鎌倉幕府"], "a": 1, "e": "正解は「平安京」です。", "topic": "重要語句"}, {"q": "征夷大将軍として東北地方に派遣された人物は？", "c": ["坂上田村麻呂", "鎌倉幕府", "室町幕府", "江戸幕府"], "a": 0, "e": "正解は「坂上田村麻呂」です。", "topic": "重要語句"}, {"q": "東北地方で朝廷に抵抗した人々は？", "c": ["室町幕府", "江戸幕府", "勘合貿易", "蝦夷"], "a": 3, "e": "正解は「蝦夷」です。", "topic": "重要語句"}, {"q": "比叡山延暦寺を開き天台宗を広めた僧は？", "c": ["勘合貿易", "書院造", "最澄", "江戸幕府"], "a": 2, "e": "正解は「最澄」です。", "topic": "重要語句"}, {"q": "最澄が広めた宗派は？", "c": ["水墨画", "天台宗", "勘合貿易", "書院造"], "a": 1, "e": "正解は「天台宗」です。", "topic": "重要語句"}, {"q": "高野山金剛峯寺を開き真言宗を広めた僧は？", "c": ["空海", "書院造", "水墨画", "法隆寺"], "a": 0, "e": "正解は「空海」です。", "topic": "重要語句"}, {"q": "空海が広めた宗派は？", "c": ["水墨画", "法隆寺", "長岡京", "真言宗"], "a": 3, "e": "正解は「真言宗」です。", "topic": "重要語句"}, {"q": "894年、遣唐使の停止を提案した人物は？", "c": ["長岡京", "院政", "菅原道真", "法隆寺"], "a": 2, "e": "正解は「菅原道真」です。", "topic": "重要語句"}, {"q": "遣唐使停止後、日本の風土や生活に合って発達した文化は？", "c": ["武家政治", "国風文化", "長岡京", "院政"], "a": 1, "e": "正解は「国風文化」です。", "topic": "重要語句"}, {"q": "幼い天皇を補佐し政治を行う役職は？", "c": ["摂政", "院政", "武家政治", "御成敗式目"], "a": 0, "e": "正解は「摂政」です。", "topic": "重要語句"}, {"q": "成人した天皇を補佐する役職は？", "c": ["武家政治", "御成敗式目", "参勤交代", "関白"], "a": 3, "e": "正解は「関白」です。", "topic": "重要語句"}, {"q": "藤原氏が摂政・関白となって行った政治は？", "c": ["参勤交代", "鎌倉幕府", "摂関政治", "御成敗式目"], "a": 2, "e": "正解は「摂関政治」です。", "topic": "重要語句"}, {"q": "摂関政治の最盛期を築いた人物は？", "c": ["室町幕府", "藤原道長", "参勤交代", "鎌倉幕府"], "a": 1, "e": "正解は「藤原道長」です。", "topic": "重要語句"}, {"q": "漢字をもとに日本で作られた文字は？", "c": ["かな文字", "鎌倉幕府", "室町幕府", "江戸幕府"], "a": 0, "e": "正解は「かな文字」です。", "topic": "重要語句"}, {"q": "『源氏物語』を書いた人物は？", "c": ["室町幕府", "江戸幕府", "勘合貿易", "紫式部"], "a": 3, "e": "正解は「紫式部」です。", "topic": "重要語句"}, {"q": "『枕草子』を書いた人物は？", "c": ["勘合貿易", "書院造", "清少納言", "江戸幕府"], "a": 2, "e": "正解は「清少納言」です。", "topic": "重要語句"}, {"q": "日本の風景や人物を描く日本独自の絵画は？", "c": ["水墨画", "大和絵", "勘合貿易", "書院造"], "a": 1, "e": "正解は「大和絵」です。", "topic": "重要語句"}, {"q": "平安時代の貴族の住居様式は？", "c": ["寝殿造", "書院造", "水墨画", "法隆寺"], "a": 0, "e": "正解は「寝殿造」です。", "topic": "重要語句"}, {"q": "極楽浄土への往生を願う信仰は？", "c": ["水墨画", "法隆寺", "長岡京", "浄土信仰"], "a": 3, "e": "正解は「浄土信仰」です。", "topic": "重要語句"}, {"q": "藤原頼通が宇治に建てた阿弥陀堂は？", "c": ["長岡京", "院政", "平等院鳳凰堂", "法隆寺"], "a": 2, "e": "正解は「平等院鳳凰堂」です。", "topic": "重要語句"}];
+const TIMELINE=[{"q": "次の出来事を古い順に並べたものはどれ？", "c": ["大宝律令 → 平城京 → 墾田永年私財法 → 平安京", "平城京 → 大宝律令 → 平安京 → 墾田永年私財法", "大宝律令 → 墾田永年私財法 → 平城京 → 平安京", "平安京 → 平城京 → 大宝律令 → 墾田永年私財法"], "a": 0, "e": "701年 大宝律令 → 710年 平城京 → 743年 墾田永年私財法 → 794年 平安京の順です。", "topic": "時系列"}, {"q": "701年に起きた出来事は？", "c": ["大宝律令が制定された", "平城京に都が移された", "墾田永年私財法が出された", "平安京に都が移された"], "a": 0, "e": "701年に大宝律令が制定されました。", "topic": "時系列"}, {"q": "710年に起きた出来事は？", "c": ["平城京に都が移された", "大宝律令が制定された", "平安京に都が移された", "遣唐使が停止された"], "a": 0, "e": "710年に平城京がつくられました。", "topic": "時系列"}, {"q": "743年に出された法は？", "c": ["墾田永年私財法", "大宝律令", "三世一身法", "班田収授法"], "a": 0, "e": "743年に墾田永年私財法が出されました。", "topic": "時系列"}, {"q": "794年に起きた出来事は？", "c": ["平安京に都が移された", "平城京に都が移された", "遣唐使が停止された", "墾田永年私財法が出された"], "a": 0, "e": "794年、桓武天皇が平安京へ都を移しました。", "topic": "時系列"}, {"q": "894年に関係する出来事は？", "c": ["遣唐使の停止が提案された", "平安京に都が移された", "大宝律令が制定された", "平城京に都が移された"], "a": 0, "e": "894年、菅原道真が遣唐使の停止を提案しました。", "topic": "時系列"}, {"q": "次のうち最も古い出来事は？", "c": ["大宝律令の制定", "平城京への遷都", "平安京への遷都", "遣唐使停止の提案"], "a": 0, "e": "大宝律令は701年で、この中では最も古い出来事です。", "topic": "時系列"}, {"q": "次のうち最も新しい出来事は？", "c": ["遣唐使停止の提案", "大宝律令の制定", "平城京への遷都", "平安京への遷都"], "a": 0, "e": "遣唐使停止の提案は894年で、この中では最も新しい出来事です。", "topic": "時系列"}, {"q": "平城京への遷都の次に起きた出来事として最も近いものは？", "c": ["墾田永年私財法", "平安京への遷都", "遣唐使停止の提案", "摂関政治の最盛期"], "a": 0, "e": "710年の平城京の後、743年に墾田永年私財法が出されました。", "topic": "時系列"}, {"q": "平安京への遷都より前に起きた出来事は？", "c": ["墾田永年私財法", "遣唐使停止の提案", "国風文化の発達", "藤原道長の摂関政治"], "a": 0, "e": "墾田永年私財法は743年、平安京への遷都は794年です。", "topic": "時系列"}, {"q": "平安京への遷都より後に起きた出来事は？", "c": ["遣唐使停止の提案", "大宝律令の制定", "平城京への遷都", "墾田永年私財法"], "a": 0, "e": "平安京への遷都は794年、遣唐使停止の提案は894年です。", "topic": "時系列"}, {"q": "次の組み合わせで、年代の順序が正しいものは？", "c": ["平城京 → 平安京 → 遣唐使停止", "平安京 → 平城京 → 遣唐使停止", "遣唐使停止 → 平城京 → 平安京", "平城京 → 遣唐使停止 → 平安京"], "a": 0, "e": "710年 平城京 → 794年 平安京 → 894年 遣唐使停止の順です。", "topic": "時系列"}];
+const SORTSETS=[{"prompt": "次の出来事を古い順に並べてください。", "items": [{"label": "大宝律令の制定", "year": 701}, {"label": "平城京への遷都", "year": 710}, {"label": "墾田永年私財法", "year": 743}, {"label": "平安京への遷都", "year": 794}]}, {"prompt": "次の出来事を古い順に並べてください。", "items": [{"label": "平城京への遷都", "year": 710}, {"label": "墾田永年私財法", "year": 743}, {"label": "平安京への遷都", "year": 794}, {"label": "遣唐使停止の提案", "year": 894}]}, {"prompt": "次の出来事を古い順に並べてください。", "items": [{"label": "大宝律令の制定", "year": 701}, {"label": "墾田永年私財法", "year": 743}, {"label": "平安京への遷都", "year": 794}, {"label": "遣唐使停止の提案", "year": 894}]}];
+const ENDPOINT="https://script.google.com/macros/s/AKfycbxxBGR0zMSx34cOws9dt7la53wo9ufEnY5_J3tKoQ6u7iI7y6N3pvbc2T6N0CUv1hJl/exec";
 const el=id=>document.getElementById(id);
 
-let qs=[];
-let idx=0;
-let selected=null;
-let answers=[];
-let startedAt=null;
-let lastWrong=[];
-let sentForAttempt=false;
+let qs=[],idx=0,selected=null,answers=[],startedAt=null,lastWrong=[],sentForAttempt=false,currentType="study";
+let sortSets=[],sortIdx=0,sortCorrect=0,sortWrong=[];
 
+function shuffle(a){const b=[...a];for(let i=b.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[b[i],b[j]]=[b[j],b[i]]}return b}
 
-/* ===== 正解音 ===== */
-
-function playCorrectSound(){
-
-const ctx=
-new (window.AudioContext ||
-window.webkitAudioContext)();
-
-const osc=ctx.createOscillator();
-const gain=ctx.createGain();
-
-osc.connect(gain);
-gain.connect(ctx.destination);
-
-osc.type="sine";
-
-osc.frequency.setValueAtTime(
-660,
-ctx.currentTime
-);
-
-osc.frequency.setValueAtTime(
-880,
-ctx.currentTime+0.12
-);
-
-osc.frequency.setValueAtTime(
-1175,
-ctx.currentTime+0.24
-);
-
-gain.gain.setValueAtTime(
-0.25,
-ctx.currentTime
-);
-
-gain.gain.exponentialRampToValueAtTime(
-0.001,
-ctx.currentTime+0.5
-);
-
-osc.start();
-
-osc.stop(
-ctx.currentTime+0.5
-);
-
+function updateModeHelp(){
+ const t=el("quizType").value;
+ if(t==="study"){
+   el("modeHelp").innerHTML="<b>覚えるクイズ：</b>答えた瞬間に○×・正解・解説を表示します。暗記するとき向けです。";
+   el("countLabel").style.display="block";el("mode").style.display="block";
+ } else if(t==="test"){
+   el("modeHelp").innerHTML="<b>テストクイズ：</b>途中では正解を表示しません。最後にまとめて採点します。本番確認向けです。";
+   el("countLabel").style.display="block";el("mode").style.display="block";
+ } else if(t==="timeline"){
+   el("modeHelp").innerHTML="<b>時系列クイズ：</b>年代・出来事の前後関係・古い順を4択で練習します。";
+   el("countLabel").style.display="none";el("mode").style.display="none";
+ } else {
+   el("modeHelp").innerHTML="<b>時系列・並び替えゲーム：</b>出来事カードを自分で古い順に並べます。時代の流れを覚える練習向けです。";
+   el("countLabel").style.display="none";el("mode").style.display="none";
+ }
 }
-
-
-/* ===== 不正解音 ===== */
-
-function playWrongSound(){
-
-const ctx=
-new (window.AudioContext ||
-window.webkitAudioContext)();
-
-const osc=ctx.createOscillator();
-const gain=ctx.createGain();
-
-osc.connect(gain);
-gain.connect(ctx.destination);
-
-osc.type="square";
-
-osc.frequency.setValueAtTime(
-220,
-ctx.currentTime
-);
-
-osc.frequency.setValueAtTime(
-150,
-ctx.currentTime+0.18
-);
-
-gain.gain.setValueAtTime(
-0.18,
-ctx.currentTime
-);
-
-gain.gain.exponentialRampToValueAtTime(
-0.001,
-ctx.currentTime+0.45
-);
-
-osc.start();
-
-osc.stop(
-ctx.currentTime+0.45
-);
-
-}
-
-
-/* ===== シャッフル ===== */
-
-function shuffle(a){
-
-const b=[...a];
-
-for(
-let i=b.length-1;
-i>0;
-i--
-){
-
-const j=
-Math.floor(
-Math.random()*(i+1)
-);
-
-[b[i],b[j]]=
-[b[j],b[i]];
-
-}
-
-return b;
-
-}
-
-
-/* ===== スタート ===== */
 
 function startQuiz(){
+ const n=el("name").value.trim();
+ if(!n){alert("名前を入力してください");return}
+ currentType=el("quizType").value;
+ startedAt=new Date();sentForAttempt=false;
+ el("start").classList.add("hidden");
+ el("result").classList.add("hidden");
 
-const studentName=
-el("name").value.trim();
+ if(currentType==="timelineSort"){
+   sortSets=shuffle(SORTSETS);
+   sortIdx=0;sortCorrect=0;sortWrong=[];
+   el("sortQuiz").classList.remove("hidden");
+   renderSort();
+   return;
+ }
 
-if(!studentName){
-
-alert(
-"名前を入力してください"
-);
-
-return;
-
+ el("quiz").classList.remove("hidden");
+ if(currentType==="timeline")qs=shuffle(TIMELINE);
+ else {
+   qs=shuffle(ALL);
+   const m=el("mode").value;
+   if(m!=="all")qs=qs.slice(0,Number(m));
+ }
+ idx=0;selected=null;answers=[];lastWrong=[];
+ render();
 }
-
-qs=shuffle(ALL);
-
-const selectedMode=
-el("mode").value;
-
-if(selectedMode!=="all"){
-
-qs=
-qs.slice(
-0,
-Number(selectedMode)
-);
-
-}
-
-idx=0;
-answers=[];
-selected=null;
-sentForAttempt=false;
-
-startedAt=
-new Date();
-
-el("start")
-.classList.add("hidden");
-
-el("result")
-.classList.add("hidden");
-
-el("quiz")
-.classList.remove("hidden");
-
-render();
-
-}
-
-
-/* ===== 問題表示 ===== */
 
 function render(){
+ selected=null;
+ const x=qs[idx];
+ el("count").textContent=`第${idx+1}問 / ${qs.length}問`;
+ el("topic").textContent=x.topic;
+ el("q").textContent=x.q;
+ el("bar").style.width=`${idx/qs.length*100}%`;
+ const box=el("choices");box.innerHTML="";
+ const fb=el("feedback");fb.classList.add("hidden");fb.innerHTML="";
+ const nb=el("nextBtn");nb.disabled=true;nb.style.opacity=".5";
 
-selected=null;
-
-const x=qs[idx];
-
-el("count").textContent=
-`第${idx+1}問 / ${qs.length}問`;
-
-el("topic").textContent=
-x.topic;
-
-el("q").textContent=
-x.q;
-
-el("bar").style.width=
-`${(idx/qs.length)*100}%`;
-
-const box=
-el("choices");
-
-box.innerHTML="";
-
-const fb=
-el("feedback");
-
-fb.classList.add("hidden");
-
-fb.innerHTML="";
-
-fb.style.background="";
-
-fb.style.color="";
-
-const nextBtn=
-el("nextBtn");
-
-nextBtn.disabled=true;
-
-nextBtn.style.opacity=".5";
-
-
-x.c.forEach(
-(t,i)=>{
-
-const b=
-document.createElement(
-"button"
-);
-
-b.className=
-"choice";
-
-b.textContent=
-`${String.fromCharCode(65+i)}. ${t}`;
-
-
-b.addEventListener(
-"click",
-()=>{
-
-if(selected!==null){
-return;
+ x.c.forEach((t,i)=>{
+   const b=document.createElement("button");
+   b.className="choice";b.textContent=`${String.fromCharCode(65+i)}. ${t}`;
+   b.onclick=()=>answerQuestion(i,b);
+   box.appendChild(b);
+ });
 }
 
-selected=i;
+function answerQuestion(i,button){
+ if(selected!==null)return;
+ selected=i;answers.push(i);
+ const x=qs[idx];
+ document.querySelectorAll(".choice").forEach(btn=>btn.disabled=true);
+ button.classList.add("sel");
 
-answers.push(i);
-
-
-document
-.querySelectorAll(".choice")
-.forEach(
-(btn,j)=>{
-
-btn.disabled=true;
-
-
-/* 正解を緑 */
-
-if(j===x.a){
-
-btn.style.background=
-"#e8f5e9";
-
-btn.style.outline=
-"3px solid #2e7d32";
-
+ if(currentType==="study" || currentType==="timeline"){
+   document.querySelectorAll(".choice").forEach((btn,j)=>{
+     if(j===x.a){btn.style.background="#e8f5e9";btn.style.outline="3px solid #2e7d32"}
+     if(j===i && i!==x.a){btn.style.background="#ffebee";btn.style.outline="3px solid #c62828"}
+   });
+   const fb=el("feedback");fb.classList.remove("hidden");
+   if(i===x.a){
+     fb.style.background="#e8f5e9";fb.style.color="#166534";
+     fb.innerHTML=`<div style="font-size:28px">○ 正解！</div><div>正解：${x.c[x.a]}</div><div class="small" style="color:#166534">${x.e}</div>`;
+   } else {
+     fb.style.background="#ffebee";fb.style.color="#b91c1c";
+     fb.innerHTML=`<div style="font-size:28px">× 不正解</div><div>正解：${x.c[x.a]}</div><div class="small" style="color:#b91c1c">${x.e}</div>`;
+   }
+ } else {
+   const fb=el("feedback");fb.classList.remove("hidden");
+   fb.style.background="#eef2ff";fb.style.color="#334155";
+   fb.textContent="回答を記録しました。正解はテスト終了後に表示します。";
+ }
+ el("nextBtn").disabled=false;el("nextBtn").style.opacity="1";
 }
 
+function nextQ(){idx++;if(idx<qs.length)render();else showResult();}
 
-/* 間違えた選択肢を赤 */
+function renderSort(){
+ const s=sortSets[sortIdx];
+ el("sortCount").textContent=`第${sortIdx+1}問 / ${sortSets.length}問`;
+ el("sortBar").style.width=`${sortIdx/sortSets.length*100}%`;
+ el("sortPrompt").textContent=s.prompt;
+ el("sortFeedback").classList.add("hidden");
+ el("checkSortBtn").classList.remove("hidden");
+ el("nextSortBtn").classList.add("hidden");
 
-if(
-j===i &&
-i!==x.a
-){
-
-btn.style.background=
-"#ffebee";
-
-btn.style.outline=
-"3px solid #c62828";
-
+ s.current=shuffle(s.items);
+ renderSortCurrentOnly();
 }
 
-});
-
-
-fb.classList.remove(
-"hidden"
-);
-
-
-/* 正解 */
-
-if(i===x.a){
-
-playCorrectSound();
-
-fb.style.background=
-"#e8f5e9";
-
-fb.style.color=
-"#166534";
-
-fb.innerHTML=
-`
-<div style="
-font-size:30px;
-font-weight:800;
-">
-○ 正解！
-</div>
-
-<div style="
-margin-top:8px;
-">
-正解：${x.c[x.a]}
-</div>
-
-<div class="small"
-style="
-margin-top:6px;
-color:#166534;
-">
-${x.e}
-</div>
-`;
-
+function moveSort(from,to){
+ const s=sortSets[sortIdx];
+ if(to<0 || to>=s.current.length || from===to) return;
+ const [moved]=s.current.splice(from,1);
+ s.current.splice(to,0,moved);
+ renderSortCurrentOnly();
 }
 
+function renderSortCurrentOnly(){
+ const s=sortSets[sortIdx];
+ const list=el("sortList");
+ list.innerHTML="";
 
-/* 不正解 */
-
-else{
-
-playWrongSound();
-
-fb.style.background=
-"#ffebee";
-
-fb.style.color=
-"#b91c1c";
-
-fb.innerHTML=
-`
-<div style="
-font-size:30px;
-font-weight:800;
-">
-× 不正解
-</div>
-
-<div style="
-margin-top:8px;
-">
-正解：${x.c[x.a]}
-</div>
-
-<div class="small"
-style="
-margin-top:6px;
-color:#b91c1c;
-">
-${x.e}
-</div>
-`;
-
+ s.current.forEach((item,i)=>{
+   const d=document.createElement("div");
+   d.className="sort-card";
+   d.innerHTML=`
+     <div class="sort-row">
+       <div><b>${item.label}</b></div>
+       <div class="move-buttons">
+         <button class="move-btn" ${i===0?"disabled":""} onclick="moveSort(${i},${i-1})">▲</button>
+         <button class="move-btn" ${i===s.current.length-1?"disabled":""} onclick="moveSort(${i},${i+1})">▼</button>
+       </div>
+     </div>`;
+   list.appendChild(d);
+ });
 }
 
+function checkSort(){
+ const s=sortSets[sortIdx];
+ const correctOrder=[...s.items].sort((a,b)=>a.year-b.year);
+ const ok=s.current.every((x,i)=>x.label===correctOrder[i].label);
 
-nextBtn.disabled=false;
+ if(ok)sortCorrect++;
+ else sortWrong.push({prompt:s.prompt,yours:s.current.map(x=>x.label).join(" → "),correct:correctOrder.map(x=>`${x.year}年 ${x.label}`).join(" → ")});
 
-nextBtn.style.opacity="1";
-
-}
-);
-
-box.appendChild(b);
-
-}
-);
-
-}
-
-
-/* ===== 次の問題 ===== */
-
-function nextQ(){
-
-if(selected===null){
-
-alert(
-"答えを選んでください"
-);
-
-return;
-
+ const fb=el("sortFeedback");fb.classList.remove("hidden");
+ if(ok){
+   fb.style.background="#e8f5e9";fb.style.color="#166534";
+   fb.innerHTML=`<div style="font-size:28px">○ 正解！</div><div class="small" style="color:#166534">${correctOrder.map(x=>`${x.year}年 ${x.label}`).join(" → ")}</div>`;
+ } else {
+   fb.style.background="#ffebee";fb.style.color="#b91c1c";
+   fb.innerHTML=`<div style="font-size:28px">× 不正解</div><div style="margin-top:6px">正しい順：</div><div class="small" style="color:#b91c1c">${correctOrder.map(x=>`${x.year}年 ${x.label}`).join(" → ")}</div>`;
+ }
+ el("checkSortBtn").classList.add("hidden");
+ el("nextSortBtn").classList.remove("hidden");
 }
 
-idx++;
-
-if(idx<qs.length){
-
-render();
-
-}else{
-
-showResult();
-
+function nextSort(){
+ sortIdx++;
+ if(sortIdx<sortSets.length)renderSort();
+ else showSortResult();
 }
 
+function showSortResult(){
+ el("sortQuiz").classList.add("hidden");
+ el("result").classList.remove("hidden");
+ const total=sortSets.length;
+ const s=Math.round(sortCorrect/total*100);
+ el("score").textContent=s+"点";
+ el("correct").textContent=`${sortCorrect} / ${total}`;
+ el("msg").textContent=s>=90?"時代の流れがかなりつかめています！":s>=70?"よくできています。もう一度並べると定着します。":"年代の並びをもう一度確認しよう。";
+ el("retryBtn").style.display="none";
+ el("review").innerHTML=sortWrong.length?sortWrong.map((w,i)=>`<div style="padding:12px;margin:10px 0;background:#fff7f7;border-radius:10px"><div class="bad">並び替え ${i+1}</div><div>あなたの順：${w.yours}</div><div class="good">正しい順：${w.correct}</div></div>`).join(""):'<p class="good">全問正解！</p>';
+ sendResult();
 }
-
-
-/* ===== 結果 ===== */
 
 function showResult(){
-
-el("quiz")
-.classList.add("hidden");
-
-el("result")
-.classList.remove("hidden");
-
-let ok=0;
-
-lastWrong=[];
-
-qs.forEach(
-(x,i)=>{
-
-if(
-answers[i]===x.a
-){
-
-ok++;
-
-}else{
-
-lastWrong.push({
-...x,
-no:i+1,
-yours:x.c[answers[i]]
-});
-
+ el("quiz").classList.add("hidden");el("result").classList.remove("hidden");
+ let ok=0;lastWrong=[];
+ qs.forEach((x,i)=>{if(answers[i]===x.a)ok++;else lastWrong.push({...x,no:i+1,yours:x.c[answers[i]]})});
+ const s=Math.round(ok/qs.length*100);
+ el("score").textContent=s+"点";el("correct").textContent=`${ok} / ${qs.length}`;
+ el("msg").textContent=s>=90?"かなり仕上がっています！":s>=70?"よくできています。間違い直しでさらに伸ばそう。":"間違えた問題を重点的に復習しよう。";
+ el("retryBtn").style.display="inline-block";
+ el("review").innerHTML=lastWrong.length?lastWrong.map(w=>`<div style="padding:12px;margin:10px 0;background:#fff7f7;border-radius:10px"><div class="bad">第${w.no}問（${w.topic}）</div><div>${w.q}</div><div>あなたの答え：${w.yours}</div><div class="good">正解：${w.c[w.a]}</div><div class="small">${w.e}</div></div>`).join(""):'<p class="good">全問正解！</p>';
+ sendResult();
 }
-
-}
-);
-
-
-const s=
-Math.round(
-ok/qs.length*100
-);
-
-
-el("score")
-.textContent=
-s+"点";
-
-
-el("correct")
-.textContent=
-`${ok} / ${qs.length}`;
-
-
-el("msg")
-.textContent=
-
-s>=90
-?
-"かなり仕上がっています！"
-
-:
-s>=70
-?
-"よくできています。間違い直しでさらに伸ばそう。"
-
-:
-"まずは間違えた問題を重点的に復習しよう。";
-
-
-el("review")
-.innerHTML=
-
-lastWrong.length
-
-?
-lastWrong.map(
-w=>
-`
-
-<div
-style="
-padding:12px;
-margin:10px 0;
-background:#fff7f7;
-border-radius:10px;
-">
-
-<div class="bad">
-
-第${w.no}問
-（${w.topic}）
-
-</div>
-
-<div>
-${w.q}
-</div>
-
-<div>
-あなたの答え：
-${w.yours}
-</div>
-
-<div class="good">
-
-正解：
-${w.c[w.a]}
-
-</div>
-
-<div class="small">
-${w.e}
-</div>
-
-</div>
-
-`
-).join("")
-
-:
-'<p class="good">全問正解！</p>';
-
-
-sendResult();
-
-}
-
-
-/* ===== 間違い問題だけ再挑戦 ===== */
 
 function retryWrong(){
-
-if(!lastWrong.length){
-
-alert(
-"間違いはありません！"
-);
-
-return;
-
+ if(!lastWrong.length){alert("間違いはありません！");return}
+ qs=shuffle(lastWrong.map(w=>({q:w.q,c:w.c,a:w.a,e:w.e,topic:w.topic})));
+ idx=0;selected=null;answers=[];lastWrong=[];sentForAttempt=false;startedAt=new Date();currentType="study";
+ el("result").classList.add("hidden");el("quiz").classList.remove("hidden");render();
 }
-
-qs=
-shuffle(
-
-lastWrong.map(
-w=>({
-
-q:w.q,
-c:w.c,
-a:w.a,
-e:w.e,
-topic:w.topic
-
-})
-)
-
-);
-
-idx=0;
-answers=[];
-selected=null;
-sentForAttempt=false;
-
-startedAt=
-new Date();
-
-el("result")
-.classList.add("hidden");
-
-el("quiz")
-.classList.remove("hidden");
-
-render();
-
-}
-
-
-/* ===== 成績データ作成 ===== */
 
 function buildData(){
-
-let ok=0;
-
-let wn=[];
-
-let tp={};
-
-qs.forEach(
-(x,i)=>{
-
-if(
-answers[i]===x.a
-){
-
-ok++;
-
-}else{
-
-wn.push(
-i+1
-);
-
-tp[x.topic]=
-(tp[x.topic]||0)+1;
-
+ if(currentType==="timelineSort"){
+   return {studentName:el("name").value.trim(),subject:"歴史・時系列並び替え",score:Math.round(sortCorrect/sortSets.length*100),correct:sortCorrect,total:sortSets.length,wrongQuestions:sortWrong.map((_,i)=>i+1).join(","),weakTopics:"時系列",startedAt:startedAt?startedAt.toISOString():"",finishedAt:new Date().toISOString()};
+ }
+ let ok=0,wn=[],tp={};
+ qs.forEach((x,i)=>{if(answers[i]===x.a)ok++;else{wn.push(i+1);tp[x.topic]=(tp[x.topic]||0)+1}});
+ const typeName=currentType==="study"?"覚えるクイズ":currentType==="test"?"テストクイズ":"時系列クイズ";
+ return {studentName:el("name").value.trim(),subject:"歴史・"+typeName,score:Math.round(ok/qs.length*100),correct:ok,total:qs.length,wrongQuestions:wn.join(","),weakTopics:Object.entries(tp).sort((a,b)=>b[1]-a[1]).map(x=>x[0]).join(","),startedAt:startedAt?startedAt.toISOString():"",finishedAt:new Date().toISOString()};
 }
-
-}
-);
-
-
-return{
-
-studentName:
-el("name")
-.value
-.trim(),
-
-subject:
-"歴史",
-
-score:
-Math.round(
-ok/qs.length*100
-),
-
-correct:
-ok,
-
-total:
-qs.length,
-
-wrongQuestions:
-wn.join(","),
-
-weakTopics:
-Object.entries(tp)
-.sort(
-(a,b)=>b[1]-a[1]
-)
-.map(
-x=>x[0]
-)
-.join(","),
-
-startedAt:
-startedAt
-?
-startedAt.toISOString()
-:
-"",
-
-finishedAt:
-new Date()
-.toISOString()
-
-};
-
-}
-
-
-/* ===== 成績自動送信 ===== */
 
 async function sendResult(){
-
-const status=
-el("sendStatus");
-
-const ENDPOINT=
-"https://script.google.com/macros/s/AKfycbxxBGR0zMSx34cOws9dt7la53wo9ufEnY5_J3tKoQ6u7iI7y6N3pvbc2T6N0CUv1hJl/exec";
-
-
-if(sentForAttempt){
-return;
+ if(sentForAttempt)return;sentForAttempt=true;
+ const status=el("sendStatus");
+ try{
+   status.textContent="成績を自動送信中…";
+   await fetch(ENDPOINT,{method:"POST",mode:"no-cors",headers:{"Content-Type":"text/plain;charset=utf-8"},body:JSON.stringify(buildData())});
+   status.textContent="成績は管理者へ自動送信されました。";
+ }catch(e){sentForAttempt=false;status.textContent="成績の自動送信に失敗しました。"}
 }
 
-sentForAttempt=true;
-
-
-try{
-
-status.textContent=
-"成績を自動送信中…";
-
-
-await fetch(
-
-ENDPOINT,
-
-{
-
-method:"POST",
-
-mode:"no-cors",
-
-headers:{
-
-"Content-Type":
-"text/plain;charset=utf-8"
-
-},
-
-body:
-JSON.stringify(
-buildData()
-)
-
-}
-
-);
-
-
-status.textContent=
-"成績は管理者へ自動送信されました。";
-
-
-}catch(e){
-
-console.error(e);
-
-sentForAttempt=false;
-
-status.textContent=
-"成績の自動送信に失敗しました。通信環境を確認してください。";
-
-}
-
-}
-
-</script>
-
-</body>
-</html>
+updateModeHelp();
+</script></body></html>
