@@ -1,0 +1,283 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>中1歴史 10/19小テスト対策ゲーム</title>
+<style>
+:root{--bg:#f5f7fb;--card:#fff;--blue:#2563eb;--green:#166534;--red:#b91c1c;--muted:#667085;--gold:#b45309}
+*{box-sizing:border-box}
+body{font-family:system-ui,-apple-system,"Hiragino Sans","Yu Gothic",sans-serif;background:var(--bg);margin:0;color:#222}
+.wrap{max-width:760px;margin:auto;padding:12px 12px calc(24px + env(safe-area-inset-bottom))}
+.card{background:var(--card);border-radius:16px;padding:16px;box-shadow:0 8px 24px #0001;margin-bottom:12px}
+h1{font-size:24px;margin:0 0 8px} h2{font-size:24px;margin:10px 0} h3{margin:14px 0 8px}
+button,input,select{font:inherit} label{font-weight:700;font-size:14px}
+input,select{width:100%;padding:11px;margin:5px 0 11px;border:1px solid #cfd4dc;border-radius:10px;background:white}
+button{border:0;border-radius:12px;padding:12px 16px;cursor:pointer}
+.primary{background:var(--blue);color:white;font-weight:700}.secondary{background:#e5e7eb;color:#111}
+.choice{display:block;width:100%;text-align:left;margin:8px 0;padding:12px;background:#f3f4f6;border:2px solid transparent;font-weight:600}
+.choice:disabled{opacity:1;color:#222}.hidden{display:none!important}
+.barbox{height:9px;background:#e5e7eb;border-radius:999px;overflow:hidden}.bar{height:100%;background:var(--blue);transition:width .2s}
+.small{font-size:13px;color:var(--muted)}.pill{display:inline-block;background:#eef2ff;padding:5px 9px;border-radius:999px;font-size:12px}
+.big{font-size:44px;font-weight:800}.good{color:var(--green);font-weight:700}.bad{color:var(--red);font-weight:700}
+.question{font-size:22px;font-weight:800;line-height:1.45;margin:14px 0}
+.feedback{margin-top:10px;padding:12px;border-radius:12px;font-weight:700}
+.explain{font-size:14px;font-weight:500;margin-top:6px;line-height:1.55}
+.nextwrap{position:sticky;bottom:calc(8px + env(safe-area-inset-bottom));padding-top:8px;background:linear-gradient(transparent,var(--card) 35%)}
+#nextBtn{width:100%;font-size:18px}.row{display:flex;gap:8px;flex-wrap:wrap}.row>button{flex:1 1 160px}
+.note{background:#fff8e1;border-radius:12px;padding:10px;font-size:13px;margin-top:10px}
+.range{background:#ecfdf3;border:1px solid #bbf7d0;border-radius:12px;padding:10px;margin:8px 0 12px}
+.badge{display:inline-block;background:#fff7ed;color:var(--gold);padding:3px 7px;border-radius:999px;font-size:12px;margin-left:5px}
+.reviewItem{padding:10px;margin:8px 0;background:#fff7f7;border-radius:10px}
+</style>
+</head>
+<body><div class="wrap">
+
+<section class="card" id="start">
+<h1>中1歴史 10/19小テスト対策ゲーム</h1>
+<div class="range"><b>今回の範囲：ワーク p16〜19・p22〜23</b><br><span class="small">奈良の都と人々の暮らし／平安の都と国風文化／律令国家・貴族社会の確認</span></div>
+
+<label>名前</label>
+<input id="name" placeholder="名前を入力">
+
+<label>範囲</label>
+<select id="category">
+  <option value="all">小テスト範囲すべて（p16-19・p22-23）</option>
+  <option value="p16-17">p16-17 奈良の都と人々の暮らし</option>
+  <option value="p18-19">p18-19 平安の都と国風文化</option>
+  <option value="p22-23">p22-23 律令国家・貴族社会の確認</option>
+</select>
+
+<label>問題数</label>
+<select id="countMode">
+  <option value="10">10問</option>
+  <option value="20">20問</option>
+  <option value="all">全問</option>
+</select>
+
+<button class="primary" style="width:100%" onclick="startQuiz()">スタート</button>
+<div class="note">※ アップロードされた歴史ワークの指定範囲だけをもとに作成しています。問題は毎回ランダムに並びます。</div>
+</section>
+
+<section class="card hidden" id="quiz">
+<div class="barbox"><div class="bar" id="bar"></div></div>
+<p class="small" id="counter"></p>
+<div><span class="pill" id="catPill"></span><span class="badge">10/19小テスト</span></div>
+<div class="question" id="prompt"></div>
+<div id="choices"></div>
+<div id="feedback" class="feedback hidden"></div>
+<div class="nextwrap"><button id="nextBtn" class="primary" onclick="nextQ()" disabled style="opacity:.5">次へ</button></div>
+</section>
+
+<section class="card hidden" id="result">
+<h2>結果</h2>
+<div class="big" id="score"></div>
+<p id="message"></p>
+<p><b>正解数：</b><span id="correct"></span></p>
+<h3>間違えた問題</h3>
+<div id="review"></div>
+<div class="row">
+  <button class="primary" onclick="retryWrong()">間違えた問題だけ再挑戦</button>
+  <button class="secondary" onclick="location.reload()">最初から</button>
+</div>
+<p class="small" id="sendStatus">終了後、成績は自動送信されます。</p>
+</section>
+
+</div>
+<script>
+const QUESTIONS = [
+{cat:"p16-17",q:"710年、奈良につくられた都は？",a:"平城京",c:["平城京","平安京","藤原京","長岡京"],e:"ワークp16。710年に都が平城京へ移されました。"},
+{cat:"p16-17",q:"平城京は、唐のどの都を手本につくられた？",a:"長安",c:["長安","洛陽","北京","南京"],e:"ワークp16-17。平城京は唐の長安を手本に整えられました。"},
+{cat:"p16-17",q:"奈良時代に使われた貨幣は？",a:"和同開珎",c:["和同開珎","富本銭","寛永通宝","永楽通宝"],e:"ワークp16。奈良時代には和同開珎などの貨幣が使われました。"},
+{cat:"p16-17",q:"戸籍にもとづいて、6歳以上の男女に与えられた田を何という？",a:"口分田",c:["口分田","荘園","公領","墾田"],e:"ワークp16。班田収授のしくみで口分田が与えられました。"},
+{cat:"p16-17",q:"収穫した稲の約3％を納める税は？",a:"租",c:["租","庸","調","雑徭"],e:"ワークp16の税の表。租は収穫した稲の約3％です。"},
+{cat:"p16-17",q:"地方の特産物（絹・真綿など）を納める税は？",a:"調",c:["調","租","庸","雑徭"],e:"ワークp16。調は地方の特産物を納める税です。"},
+{cat:"p16-17",q:"労役の代わりに麻の布などを納める税は？",a:"庸",c:["庸","租","調","兵役"],e:"ワークp16。庸は労役の代わりに布などを納めました。"},
+{cat:"p16-17",q:"口分田不足への対策として743年に出された法は？",a:"墾田永年私財法",c:["墾田永年私財法","十七条の憲法","大宝律令","班田収授法"],e:"ワークp16・p23。743年、墾田永年私財法が出されました。"},
+{cat:"p16-17",q:"貴族や寺院などが広げた私有地を何という？",a:"荘園",c:["荘園","口分田","国分寺","郡"],e:"ワークp16。墾田永年私財法の後、貴族・寺院などが所有地を広げました。"},
+{cat:"p16-17",q:"奈良時代、唐へ派遣された使節は？",a:"遣唐使",c:["遣唐使","遣隋使","防人","国司"],e:"ワークp16。奈良時代には遣唐使が送られました。"},
+{cat:"p16-17",q:"失明しながらも来日し、唐の仏教を伝えた人物は？",a:"鑑真",c:["鑑真","最澄","空海","行基"],e:"ワークp16-17。鑑真は失明しながらも来日し、仏教を伝えました。"},
+{cat:"p16-17",q:"仏教の力で国を守ろうとし、国ごとに国分寺・国分尼寺を建てさせた天皇は？",a:"聖武天皇",c:["聖武天皇","桓武天皇","天武天皇","嵯峨天皇"],e:"ワークp16。聖武天皇は国分寺・国分尼寺を建てさせました。"},
+{cat:"p16-17",q:"聖武天皇が大仏をまつるために建てた寺は？",a:"東大寺",c:["東大寺","法隆寺","延暦寺","平等院"],e:"ワークp16-17。東大寺には大仏がまつられました。"},
+{cat:"p16-17",q:"奈良時代の国際色豊かな文化を何という？",a:"天平文化",c:["天平文化","国風文化","飛鳥文化","北山文化"],e:"ワークp16。唐などの影響を受けた国際色豊かな文化です。"},
+{cat:"p16-17",q:"奈良時代につくられた歴史書の組み合わせとして正しいものは？",a:"『古事記』と『日本書紀』",c:["『古事記』と『日本書紀』","『源氏物語』と『枕草子』","『万葉集』と『古今和歌集』","『方丈記』と『徒然草』"],e:"ワークp16。『古事記』『日本書紀』は歴史書としてまとめられました。"},
+{cat:"p16-17",q:"奈良時代の歌集は？",a:"『万葉集』",c:["『万葉集』","『古今和歌集』","『新古今和歌集』","『枕草子』"],e:"ワークp16。『万葉集』は奈良時代の代表的な歌集です。"},
+{cat:"p16-17",q:"平城京の道路が碁盤の目のように整えられた区画のしくみを何という？",a:"条坊制",c:["条坊制","班田収授法","摂関政治","公地公民"],e:"ワークp17。平城京は道路が規則正しく区切られていました。"},
+
+{cat:"p18-19",q:"794年、都を平安京に移した天皇は？",a:"桓武天皇",c:["桓武天皇","聖武天皇","天武天皇","推古天皇"],e:"ワークp18-19。794年、桓武天皇が都を平安京へ移しました。"},
+{cat:"p18-19",q:"794年以後の時代を何という？",a:"平安時代",c:["平安時代","奈良時代","飛鳥時代","鎌倉時代"],e:"ワークp18。平安京への遷都後を平安時代といいます。"},
+{cat:"p18-19",q:"征夷大将軍に任命され、東北地方に送られた人物は？",a:"坂上田村麻呂",c:["坂上田村麻呂","藤原道長","菅原道真","源頼朝"],e:"ワークp18-19。坂上田村麻呂が征夷大将軍に任命されました。"},
+{cat:"p18-19",q:"平安時代、摂政や関白の職につき政治を動かした一族は？",a:"藤原氏",c:["藤原氏","平氏","源氏","蘇我氏"],e:"ワークp18。藤原氏が摂政・関白の地位を利用して力を伸ばしました。"},
+{cat:"p18-19",q:"藤原氏が摂政・関白として行った政治を何という？",a:"摂関政治",c:["摂関政治","院政","幕府政治","執権政治"],e:"ワークp18。摂政・関白を中心とする政治を摂関政治といいます。"},
+{cat:"p18-19",q:"幼い天皇に代わって政治を行う役職は？",a:"摂政",c:["摂政","関白","国司","征夷大将軍"],e:"ワークp18-19。幼い天皇を補佐して政治を行うのが摂政です。"},
+{cat:"p18-19",q:"成人した天皇を補佐する役職は？",a:"関白",c:["関白","摂政","太政大臣","国司"],e:"ワークp18-19。成人した天皇を補佐するのが関白です。"},
+{cat:"p18-19",q:"平安時代に勢力を大きく伸ばした藤原氏の人物は？",a:"藤原道長",c:["藤原道長","藤原鎌足","中臣鎌足","藤原不比等"],e:"ワークp18-19。藤原道長らの時代に摂関政治が栄えました。"},
+{cat:"p18-19",q:"比叡山に延暦寺を建て、天台宗を開いた人物は？",a:"最澄",c:["最澄","空海","鑑真","法然"],e:"ワークp18-19。最澄は天台宗を開きました。"},
+{cat:"p18-19",q:"高野山に金剛峯寺を建て、真言宗を開いた人物は？",a:"空海",c:["空海","最澄","鑑真","親鸞"],e:"ワークp18-19。空海は真言宗を開きました。"},
+{cat:"p18-19",q:"894年、遣唐使の停止を提案した人物は？",a:"菅原道真",c:["菅原道真","坂上田村麻呂","藤原道長","聖武天皇"],e:"ワークp18-19。894年に遣唐使が停止されました。"},
+{cat:"p18-19",q:"平安時代に発達した、日本の風土や生活に合った文化は？",a:"国風文化",c:["国風文化","天平文化","飛鳥文化","東山文化"],e:"ワークp18-19。遣唐使停止後、日本の風土に合った国風文化が発達しました。"},
+{cat:"p18-19",q:"平安時代の貴族の住宅様式を何という？",a:"寝殿造",c:["寝殿造","書院造","校倉造","数寄屋造"],e:"ワークp18。貴族の住まいには寝殿造が広まりました。"},
+{cat:"p18-19",q:"日本語の発音を表すために広まった文字は？",a:"かな文字",c:["かな文字","甲骨文字","楔形文字","ハングル"],e:"ワークp18。かな文字が生まれ、文学が発達しました。"},
+{cat:"p18-19",q:"『源氏物語』を書いた人物は？",a:"紫式部",c:["紫式部","清少納言","紀貫之","小野小町"],e:"ワークp19。『源氏物語』は紫式部の作品です。"},
+{cat:"p18-19",q:"『枕草子』を書いた人物は？",a:"清少納言",c:["清少納言","紫式部","紀貫之","菅原道真"],e:"ワークp18-19。『枕草子』は清少納言の作品です。"},
+{cat:"p18-19",q:"平安時代末ごろに広がった、念仏を唱えて極楽往生を願う信仰は？",a:"浄土信仰",c:["浄土信仰","神仏習合","修験道","禅宗"],e:"ワークp18-19。末法思想の広がりとともに浄土信仰が広まりました。"},
+{cat:"p18-19",q:"藤原頼通が建てた、国風文化を代表する建物は？",a:"平等院鳳凰堂",c:["平等院鳳凰堂","東大寺大仏殿","法隆寺金堂","金閣"],e:"ワークp18-19・p22。平等院鳳凰堂は国風文化を代表する建物です。"},
+
+{cat:"p22-23",q:"聖徳太子が建てた寺として、ワークp22の資料Aに示されているのは？",a:"法隆寺",c:["法隆寺","東大寺","延暦寺","平等院"],e:"ワークp22。資料Aは法隆寺です。"},
+{cat:"p22-23",q:"法隆寺に代表される文化は？",a:"飛鳥文化",c:["飛鳥文化","天平文化","国風文化","鎌倉文化"],e:"ワークp22。法隆寺は飛鳥文化を代表する建築です。"},
+{cat:"p22-23",q:"聖徳太子が定めた、役人の心構えを示すきまりは？",a:"十七条の憲法",c:["十七条の憲法","御成敗式目","武家諸法度","五箇条の御誓文"],e:"ワークp22。十七条の憲法は役人の心構えを示しました。"},
+{cat:"p22-23",q:"藤原頼通が建てた資料Bの建物は？",a:"平等院鳳凰堂",c:["平等院鳳凰堂","法隆寺","東大寺","唐招提寺"],e:"ワークp22。資料Bは平等院鳳凰堂です。"},
+{cat:"p22-23",q:"平等院鳳凰堂が建てられた背景にある信仰は？",a:"浄土信仰",c:["浄土信仰","禅宗","密教","キリスト教"],e:"ワークp22。阿弥陀仏にすがって極楽往生を願う浄土信仰が広がりました。"},
+{cat:"p22-23",q:"ワークp22の資料Cのような、文字を書いた細長い木の札を何という？",a:"木簡",c:["木簡","竹簡","勘合","絵巻"],e:"ワークp22。資料Cは木簡です。"},
+{cat:"p22-23",q:"645年に始まった政治改革は？",a:"大化の改新",c:["大化の改新","建武の新政","承久の乱","応仁の乱"],e:"ワークp23の年表。645年に大化の改新が始まりました。"},
+{cat:"p22-23",q:"710年に都が移された場所は？",a:"平城京",c:["平城京","平安京","鎌倉","大宰府"],e:"ワークp23の年表。710年、平城京へ遷都しました。"},
+{cat:"p22-23",q:"743年に出された法は？",a:"墾田永年私財法",c:["墾田永年私財法","大宝律令","十七条の憲法","御成敗式目"],e:"ワークp23の年表。743年、墾田永年私財法が出されました。"},
+{cat:"p22-23",q:"794年に都が移された場所は？",a:"平安京",c:["平安京","平城京","長岡京","藤原京"],e:"ワークp23の年表。794年、平安京へ遷都しました。"},
+{cat:"p22-23",q:"894年に停止されたものは？",a:"遣唐使",c:["遣唐使","遣隋使","防人","班田収授"],e:"ワークp23の年表。894年、遣唐使が停止されました。"},
+{cat:"p22-23",q:"奈良の仏教勢力の政治への影響を避けるため、桓武天皇が行ったことは？",a:"都を平安京へ移した",c:["都を平安京へ移した","大仏をつくった","鎌倉幕府を開いた","遣隋使を送った"],e:"ワークp19・p23。政治を立て直す目的もあり、都を平安京へ移しました。"},
+{cat:"p22-23",q:"律令制度の税で、都での労役の代わりに布などを納めるものは？",a:"庸",c:["庸","租","調","雑徭"],e:"ワークp16・p23。庸は労役の代わりに布などを納める税です。"},
+{cat:"p22-23",q:"律令制度の税で、地方の特産物を納めるものは？",a:"調",c:["調","租","庸","兵役"],e:"ワークp16・p23。調は地方の特産物を納める税です。"}
+];
+
+const el=id=>document.getElementById(id);
+let qs=[],idx=0,selected=null,lastWrong=[],startedAt=null,sentForAttempt=false;
+
+function shuffle(a){const b=[...a];for(let i=b.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[b[i],b[j]]=[b[j],b[i]]}return b}
+
+function playTone(ok){
+  try{
+    const ctx=new (window.AudioContext||window.webkitAudioContext)();
+    const osc=ctx.createOscillator(),gain=ctx.createGain();
+    osc.connect(gain);gain.connect(ctx.destination);
+    osc.type=ok?'sine':'square';
+    osc.frequency.value=ok?700:180;
+    gain.gain.value=.05;osc.start();
+    setTimeout(()=>{osc.stop();ctx.close()},120);
+  }catch(e){}
+}
+
+function catLabel(cat){
+  if(cat==="p16-17") return "p16-17 奈良";
+  if(cat==="p18-19") return "p18-19 平安";
+  if(cat==="p22-23") return "p22-23 確認";
+  return cat;
+}
+
+function startQuiz(){
+  const name=el('name').value.trim();
+  if(!name){alert('名前を入力してください');return}
+  const cat=el('category').value;
+  let pool=cat==='all'?[...QUESTIONS]:QUESTIONS.filter(x=>x.cat===cat);
+  pool=shuffle(pool);
+  const mode=el('countMode').value;
+  qs=mode==='all'?pool:pool.slice(0,Math.min(Number(mode),pool.length));
+  idx=0;selected=null;lastWrong=[];startedAt=new Date();sentForAttempt=false;
+  el('start').classList.add('hidden');el('result').classList.add('hidden');el('quiz').classList.remove('hidden');
+  render();
+}
+
+function render(){
+  selected=null;
+  const x=qs[idx];
+  el('counter').textContent=`第${idx+1}問 / ${qs.length}問`;
+  el('catPill').textContent=catLabel(x.cat);
+  el('prompt').textContent=x.q;
+  el('bar').style.width=`${idx/qs.length*100}%`;
+  const box=el('choices');box.innerHTML='';
+  const fb=el('feedback');fb.classList.add('hidden');fb.innerHTML='';fb.style.background='';fb.style.color='';
+  const next=el('nextBtn');next.disabled=true;next.style.opacity='.5';
+
+  shuffle(x.c).forEach(t=>{
+    const b=document.createElement('button');
+    b.className='choice';b.textContent=t;
+    b.onclick=()=>{
+      if(selected!==null)return;
+      selected=t;
+      document.querySelectorAll('.choice').forEach(btn=>{
+        btn.disabled=true;
+        if(btn.textContent===x.a){btn.style.background='#e8f5e9';btn.style.borderColor='#2e7d32'}
+        if(btn.textContent===t&&t!==x.a){btn.style.background='#ffebee';btn.style.borderColor='#c62828'}
+      });
+      const ok=t===x.a;
+      x._ok=ok;
+      playTone(ok);
+      fb.classList.remove('hidden');
+      fb.style.background=ok?'#e8f5e9':'#ffebee';
+      fb.style.color=ok?'#166534':'#b91c1c';
+      fb.innerHTML=`<div style="font-size:26px">${ok?'○ 正解！':'× 不正解'}</div>
+      <div style="margin-top:6px">正解：${x.a}</div>
+      <div class="explain">${x.e}</div>`;
+      next.disabled=false;next.style.opacity='1';
+    };
+    box.appendChild(b);
+  });
+}
+
+function nextQ(){
+  if(selected===null)return;
+  idx++;
+  if(idx<qs.length)render();else showResult();
+}
+
+function showResult(){
+  el('quiz').classList.add('hidden');el('result').classList.remove('hidden');
+  const ok=qs.filter(x=>x._ok).length;
+  lastWrong=qs.filter(x=>!x._ok);
+  const s=Math.round(ok/qs.length*100);
+  el('score').textContent=s+'点';
+  el('correct').textContent=`${ok} / ${qs.length}`;
+  el('message').textContent=s>=90?'かなり仕上がっています！':s>=70?'あと少し。間違えた問題をもう一度！':'まずは間違えた問題だけ繰り返そう。';
+  el('review').innerHTML=lastWrong.length
+    ?lastWrong.map(w=>`<div class="reviewItem"><b>${w.q}</b><br>正解：${w.a}<br><span class="small">${w.e}</span></div>`).join('')
+    :'<p class="good">全問正解！</p>';
+  sendResult();
+}
+
+function retryWrong(){
+  if(!lastWrong.length){alert('間違いはありません！');return}
+  qs=shuffle(lastWrong.map(x=>({...x,_ok:false})));
+  idx=0;selected=null;lastWrong=[];sentForAttempt=false;startedAt=new Date();
+  el('result').classList.add('hidden');el('quiz').classList.remove('hidden');render();
+}
+
+function buildData(){
+  const ok=qs.filter(x=>x._ok).length;
+  const wrong=qs.filter(x=>!x._ok).map(x=>x.q);
+  const selectedCat=el('category').value;
+  const catText=selectedCat==='all'
+    ?'10/19小テスト p16-19・p22-23'
+    :'10/19小テスト '+el('category').options[el('category').selectedIndex].text;
+  return{
+    studentName:el('name').value.trim(),
+    subject:'歴史・10/19小テスト',
+    category:catText,
+    score:Math.round(ok/qs.length*100),
+    correct:ok,
+    total:qs.length,
+    wrongQuestions:wrong.join(' / '),
+    weakTopics:[...new Set(qs.filter(x=>!x._ok).map(x=>catLabel(x.cat)))].join(','),
+    startedAt:startedAt?startedAt.toISOString():'',
+    finishedAt:new Date().toISOString()
+  };
+}
+
+async function sendResult(){
+  const status=el('sendStatus');
+  const ENDPOINT='https://script.google.com/macros/s/AKfycbxxBGR0zMSx34cOws9dt7la53wo9ufEnY5_J3tKoQ6u7iI7y6N3pvbc2T6N0CUv1hJl/exec';
+  if(sentForAttempt)return;
+  sentForAttempt=true;
+  try{
+    status.textContent='成績を自動送信中…';
+    await fetch(ENDPOINT,{
+      method:'POST',mode:'no-cors',
+      headers:{'Content-Type':'text/plain;charset=utf-8'},
+      body:JSON.stringify(buildData())
+    });
+    status.textContent='成績は管理者へ自動送信されました。';
+  }catch(e){
+    sentForAttempt=false;
+    status.textContent='成績の自動送信に失敗しました。';
+  }
+}
+</script>
+</body></html>
